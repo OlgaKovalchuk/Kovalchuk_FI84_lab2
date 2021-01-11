@@ -40,6 +40,30 @@ int Min(int a, int b)
 	return c;
 }
 
+int SizeOfArray(int A[])
+{
+	int size_limit = 1000;
+	int size_of_array = 0;
+	int i = 0;
+	while (A[i] >= 0 && A[i] < 16 && i < size_limit + 1)
+	{
+		size_of_array++;
+		i++;
+	}
+	return size_of_array;
+}
+
+string ConvertNumberToStr(int A[], int size)
+{
+	string answer;
+	for (int i = 0; i < size; i++)
+	{
+		int n = A[i];
+		answer += HEX_DIGITS.at(n);
+	}
+	return answer;
+}
+
 int* LongAdd(int A[], int B[], int a_length, int b_length)
 {
 	int c = Max(a_length, b_length);
@@ -312,6 +336,65 @@ int* PowerToSquare(int A[], int a_length)
 	return Answer;
 }
 
+int* DvoichnaForma(int A[], int a_length)
+{
+	int* Dvoich_A = new int[4 * a_length];
+	int ostacha;
+	for (int i = 0; i < a_length; i++)
+	{
+		ostacha = A[i];
+		Dvoich_A[4 * i + 3] = ostacha % 2;
+		ostacha = ostacha / 2;
+		Dvoich_A[4 * i + 2] = ostacha % 2;
+		ostacha = ostacha / 2;
+		Dvoich_A[4 * i + 1] = ostacha % 2;
+		ostacha = ostacha / 2;
+		Dvoich_A[4 * i] = ostacha % 2;
+		ostacha = ostacha / 2;
+	}
+	return Dvoich_A;
+}
+
+int* LongPower(int A[], int B[], int a_length, int b_length)
+{
+	int* Dvoich_B = DvoichnaForma(B, b_length);
+	string Dvoich_B_str = ConvertNumberToStr(Dvoich_B, SizeOfArray(Dvoich_B));
+	cout << Dvoich_B_str << endl;
+	int first_1 = Dvoich_B_str.find('1');
+	cout << "first_1 = " << first_1 << endl;
+	int* Answer = new int[500 * a_length];
+	int* Answer1 = new int[500 * a_length];
+	for (int i = 0; i < a_length; i++)
+	{
+		Answer1[500 * a_length - i - 1] = A[a_length - i - 1];
+	}
+	for (int j = 0; j < 500 * a_length - a_length; j++)
+	{
+		Answer1[j] = 0;
+	}
+	for (int j = 0; j < 500 * a_length; j++)
+	{
+		Answer[j] = 0;
+	}
+	for (int j = first_1 + 1; j < 4 * b_length; j++)
+	{
+		Answer = PowerToSquare(Answer1, 500 * a_length);
+		for (int k = 0; k < 500 * a_length; k++)
+		{
+			Answer1[500 * a_length - k - 1] = Answer[2 * 500 * a_length - k - 1];
+		}
+		if (Dvoich_B[j] == 1)
+		{
+			Answer = LongMul(Answer1, A, 500 * a_length, a_length);
+			for (int k = 0; k < 500 * a_length; k++)
+			{
+				Answer1[500 * a_length - k - 1] = Answer[2 * 500 * a_length - k - 1];
+			}
+		}
+	}
+	return Answer1;
+}
+
 int* ConvertStrToNumber(string a, int a_length)
 {
 	int* Answer = new int[a_length];
@@ -332,16 +415,6 @@ int* ConvertStrToNumber(string a, int a_length)
 	return Answer;
 }
 
-string ConvertNumberToStr(int A[], int size)
-{
-	string answer;
-	for (int i = 0; i < size; i++)
-	{
-		answer += HEX_DIGITS.at(A[i]);
-	}
-	return answer;
-}
-
 int CompareNum(int A[], int B[], int a_length, int b_length)
 {
 	int answer;
@@ -357,18 +430,18 @@ int CompareNum(int A[], int B[], int a_length, int b_length)
 	{
 		if (A[0] < B[0])
 		{
-			answer = 0;  //×èñëî À ìåíüøå ÷èñëà Â
+			answer = 0;  //Ð§Ð¸ÑÐ»Ð¾ Ð Ð¼ÐµÐ½ÑŒÑˆÐµ Ñ‡Ð¸ÑÐ»Ð° Ð’
 		}
 		else if (A[0] > B[0])
 		{
-			answer = 1;  //×èñëî À áîëüøå ÷èñëà Â
+			answer = 1;  //Ð§Ð¸ÑÐ»Ð¾ Ð Ð±Ð¾Ð»ÑŒÑˆÐµ Ñ‡Ð¸ÑÐ»Ð° Ð’
 		}
 		else if (A[0] == B[0])
 		{
 			int i = 1;
 			while ((A[i] == B[i]) && i != Max(a_length, b_length))
 			{
-				answer = 2;   //×èñëî À ðàâíî ÷èñëó Â
+				answer = 2;   //Ð§Ð¸ÑÐ»Ð¾ Ð Ñ€Ð°Ð²Ð½Ð¾ Ñ‡Ð¸ÑÐ»Ñƒ Ð’
 				i++;
 			}
 			if (i == Max(a_length, b_length) && A[i] == B[i])
@@ -404,19 +477,6 @@ int* LongShiftBitsToHigh(int B[], int number_of_cells_shift, int b_length)
 		NewB[k] = 0;
 	}
 	return NewB;
-}
-
-int SizeOfArray(int A[])
-{
-	int size_limit = 1000;
-	int size_of_array = 0;
-	int i = 0;
-	while (A[i] >= 0 && A[i] < 16 && i < size_limit + 1)
-	{
-		size_of_array++;
-		i++;
-	}
-	return size_of_array;
 }
 
 int* LongDivModul(int A[], int B[], int a_length, int b_length)
@@ -466,7 +526,7 @@ int* LongDivModul(int A[], int B[], int a_length, int b_length)
 				new_b_length--;
 				/*if (b_length != length_Ostacha)
 				{
-					cout << "Ñäâèãàåìñÿ â ÷àñòêå" << endl;
+					cout << "Ð¡Ð´Ð²Ð¸Ð³Ð°ÐµÐ¼ÑÑ Ð² Ñ‡Ð°ÑÑ‚ÐºÐµ" << endl;
 					shift++;
 				}*/
 				//shift++;
@@ -474,7 +534,7 @@ int* LongDivModul(int A[], int B[], int a_length, int b_length)
 			shift++;
 		}
 		NewB = LongShiftBitsToHigh(B, length_Ostacha - b_length, b_length);
-		/*cout << "Ñäâèíóòîå ÷èñëî Â:" << endl;
+		/*cout << "Ð¡Ð´Ð²Ð¸Ð½ÑƒÑ‚Ð¾Ðµ Ñ‡Ð¸ÑÐ»Ð¾ Ð’:" << endl;
 		for (int i = 0; i < length_Ostacha; i++)
 		{
 			cout << NewB[i] << "  ";
@@ -487,7 +547,7 @@ int* LongDivModul(int A[], int B[], int a_length, int b_length)
 				break;
 			}
 			NewB = LongShiftBitsToHigh(B, length_Ostacha - b_length - 1, b_length);
-			/*cout << "Ñäâèíóòîå ÷èñëî Â:" << endl;
+			/*cout << "Ð¡Ð´Ð²Ð¸Ð½ÑƒÑ‚Ð¾Ðµ Ñ‡Ð¸ÑÐ»Ð¾ Ð’:" << endl;
 			for (int i = 0; i < new_b_length; i++)
 			{
 				cout << NewB[i] << "  ";
@@ -499,14 +559,14 @@ int* LongDivModul(int A[], int B[], int a_length, int b_length)
 		{
 			break;
 		}
-		/*cout << "Îñòàòîê ñåé÷àñ:" << endl;
+		/*cout << "ÐžÑÑ‚Ð°Ñ‚Ð¾Ðº ÑÐµÐ¹Ñ‡Ð°Ñ:" << endl;
 		for (int i = 0; i < length_Ostacha; i++)
 		{
 			cout << "Ostacha[" << i << "] = " << Ostacha[i] << endl;
 		}
 		cout << endl;*/
 		Answer = LongSub(Ostacha, NewB, length_Ostacha, new_b_length);
-		/*cout << "Ðàçíîñòü À è Â:" << endl;
+		/*cout << "Ð Ð°Ð·Ð½Ð¾ÑÑ‚ÑŒ Ð Ð¸ Ð’:" << endl;
 		for (int i = 0; i < a_length; i++)
 		{
 			cout <<"Answer["<<i<<"] = "<< Answer[i] <<endl;
@@ -526,7 +586,7 @@ int* LongDivModul(int A[], int B[], int a_length, int b_length)
 			Q[a_length - 1] = 0;
 		}
 		Chastka = LongAdd(Chastka, Q, a_length, a_length);
-		/*cout << "×àñòêà ðàâíà ñåé÷àñ:" << endl;
+		/*cout << "Ð§Ð°ÑÑ‚ÐºÐ° Ñ€Ð°Ð²Ð½Ð° ÑÐµÐ¹Ñ‡Ð°Ñ:" << endl;
 		for (int i = 0; i < a_length; i++)
 		{
 			cout << Chastka[i] << "  ";
@@ -552,8 +612,8 @@ int* LongAddModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 		AnswerAddStr = ConvertNumberToStr(AnswerAdd, Max(a_length, b_length));
 	}
 	answerAdd_length= AnswerAddStr.length();
-	cout << "Äëèíà ñóììû À è Â: " << answerAdd_length << endl;
-	cout << "Ðåçóëüòàò ñóììû À è Â:" << endl;
+	cout << "Ð”Ð»Ð¸Ð½Ð° ÑÑƒÐ¼Ð¼Ñ‹ Ð Ð¸ Ð’: " << answerAdd_length << endl;
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ ÑÑƒÐ¼Ð¼Ñ‹ Ð Ð¸ Ð’:" << endl;
 	for (int i = 0; i < answerAdd_length; i++)
 	{
 		cout << AnswerAdd[i] << "  ";
@@ -562,7 +622,7 @@ int* LongAddModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	int* Answer1 = LongDivModul(AnswerAdd, M, answerAdd_length, m_length);
 	string answer1;
 	int Answer1_length;
-	cout << "Ðåçóëüòàò äåëåíèÿ (À+Â) íà Ì:" << endl;
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ð´ÐµÐ»ÐµÐ½Ð¸Ñ (Ð+Ð’) Ð½Ð° Ðœ:" << endl;
 	for (int i = 0; i < Max(answerAdd_length, m_length); i++)
 	{
 		cout << Answer1[i] << "  ";
@@ -590,7 +650,7 @@ int* LongAddModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 		answer1.erase(0, answer1.length() - 1);
 	}
 	Answer1_length = answer1.length();
-	cout << "Äëèíà ñòðîêè ñ ÷àñòêîé: " << answer1.length() << endl;
+	cout << "Ð”Ð»Ð¸Ð½Ð° ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ñ Ñ‡Ð°ÑÑ‚ÐºÐ¾Ð¹: " << answer1.length() << endl;
 	for (int i = 0; i < Max(answerAdd_length, m_length); i++)
 	{
 		Answer1[i] = Answer1[Max(answerAdd_length, m_length) - Answer1_length-i];
@@ -601,7 +661,7 @@ int* LongAddModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	}
 	cout << endl;
 	int* Answer2 = LongMul( M, Answer1, m_length, Answer1_length);
-	cout << "Ðåçóëüòàò óìíîæåíèÿ ÷àñòêè íà Ì:" << endl;
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ ÑƒÐ¼Ð½Ð¾Ð¶ÐµÐ½Ð¸Ñ Ñ‡Ð°ÑÑ‚ÐºÐ¸ Ð½Ð° Ðœ:" << endl;
 	for (int i = 0; i < 2*Max(Answer1_length, m_length); i++)
 	{
 		cout << Answer2[i] << "  ";
@@ -629,7 +689,7 @@ int* LongAddModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	{
 		answer2.erase(0, answer2.length() - 1);
 	}
-	cout << "Äëèíà ñòðîêè ñ ðåçóëüòàòîì óìíîæåíèÿ ÷àñòêè íà Ì: " << answer2.length() << endl;
+	cout << "Ð”Ð»Ð¸Ð½Ð° ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ñ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚Ð¾Ð¼ ÑƒÐ¼Ð½Ð¾Ð¶ÐµÐ½Ð¸Ñ Ñ‡Ð°ÑÑ‚ÐºÐ¸ Ð½Ð° Ðœ: " << answer2.length() << endl;
 	answer_mul_on_modul_length = answer2.length();
 	for (int i = 0; i < answer_mul_on_modul_length; i++)
 	{
@@ -657,8 +717,8 @@ int* LongSubModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	int* AnswerSub = LongSub(A, B, a_length, b_length);
 	AnswerSubStr = ConvertNumberToStr(AnswerSub, Max(a_length, b_length));
 	answerSub_length = AnswerSubStr.length();
-	cout << "Äëèíà ðàçíèöû À è Â: " << answerSub_length << endl;
-	cout << "Ðåçóëüòàò ðàçíèöû À è Â:" << endl;
+	cout << "Ð”Ð»Ð¸Ð½Ð° Ñ€Ð°Ð·Ð½Ð¸Ñ†Ñ‹ Ð Ð¸ Ð’: " << answerSub_length << endl;
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ñ€Ð°Ð·Ð½Ð¸Ñ†Ñ‹ Ð Ð¸ Ð’:" << endl;
 	for (int i = 0; i < answerSub_length; i++)
 	{
 		cout << AnswerSub[i] << "  ";
@@ -667,7 +727,7 @@ int* LongSubModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	int* Answer1 = LongDivModul(AnswerSub, M, answerSub_length, m_length);
 	string answer1;
 	int Answer1_length;
-	cout << "Ðåçóëüòàò äåëåíèÿ (À-Â) íà Ì:" << endl;
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ð´ÐµÐ»ÐµÐ½Ð¸Ñ (Ð-Ð’) Ð½Ð° Ðœ:" << endl;
 	for (int i = 0; i < Max(answerSub_length, m_length); i++)
 	{
 		cout << Answer1[i] << "  ";
@@ -695,7 +755,7 @@ int* LongSubModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 		answer1.erase(0, answer1.length() - 1);
 	}
 	Answer1_length = answer1.length();
-	cout << "Äëèíà ñòðîêè ñ ÷àñòêîé: " << answer1.length() << endl;
+	cout << "Ð”Ð»Ð¸Ð½Ð° ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ñ Ñ‡Ð°ÑÑ‚ÐºÐ¾Ð¹: " << answer1.length() << endl;
 	for (int i = 0; i < Max(answerSub_length, m_length); i++)
 	{
 		Answer1[i] = Answer1[Max(answerSub_length, m_length) - Answer1_length - i];
@@ -706,7 +766,7 @@ int* LongSubModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	}
 	cout << endl;
 	int* Answer2 = LongMul(M, Answer1, m_length, Answer1_length);
-	cout << "Ðåçóëüòàò óìíîæåíèÿ ÷àñòêè íà Ì:" << endl;
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ ÑƒÐ¼Ð½Ð¾Ð¶ÐµÐ½Ð¸Ñ Ñ‡Ð°ÑÑ‚ÐºÐ¸ Ð½Ð° Ðœ:" << endl;
 	for (int i = 0; i < 2 * Max(Answer1_length, m_length); i++)
 	{
 		cout << Answer2[i] << "  ";
@@ -734,7 +794,7 @@ int* LongSubModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	{
 		answer2.erase(0, answer2.length() - 1);
 	}
-	cout << "Äëèíà ñòðîêè ñ ðåçóëüòàòîì óìíîæåíèÿ ÷àñòêè íà Ì: " << answer2.length() << endl;
+	cout << "Ð”Ð»Ð¸Ð½Ð° ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ñ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚Ð¾Ð¼ ÑƒÐ¼Ð½Ð¾Ð¶ÐµÐ½Ð¸Ñ Ñ‡Ð°ÑÑ‚ÐºÐ¸ Ð½Ð° Ðœ: " << answer2.length() << endl;
 	answer_mul_on_modul_length = answer2.length();
 	for (int i = 0; i < answer_mul_on_modul_length; i++)
 	{
@@ -780,7 +840,7 @@ int* LongSubModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	while (is_zeroe != 0)
 	{
 		Q = LongDivModul(R0, R1, a_length, b_length);
-		cout << "Ðåçóëüòàò äåëåíèÿ R" << i << " íà R" << i + 1 << ":" << endl;
+		cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ð´ÐµÐ»ÐµÐ½Ð¸Ñ R" << i << " Ð½Ð° R" << i + 1 << ":" << endl;
 		for (int i = 0; i < a_length; i++)
 		{
 			cout << Q[i] << "  ";
@@ -807,7 +867,7 @@ int* LongSubModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 int* LongMulModul(int A[], int B[], int M[], int a_length, int b_length, int m_length)
 {
 	int* AnswerMul = LongMul(A, B, a_length, b_length);
-	/*cout << "Ðåçóëüòàò óìíîæåíèÿ À íà Â:" << endl;
+	/*cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ ÑƒÐ¼Ð½Ð¾Ð¶ÐµÐ½Ð¸Ñ Ð Ð½Ð° Ð’:" << endl;
 	for (int i = 0; i < 2 * Max(a_length, b_length); i++)
 	{
 		cout << AnswerMul[i] << "  ";
@@ -820,7 +880,7 @@ int* LongMulModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	}
 	cout << answerMul << endl;
 	int AnswerMul_length = answerMul.length();
-	//cout << "Äëèíà ñòðîêè ñ ðåçóëüòàòîì óìíîæåíèÿ: " << answerMul.length() << endl;
+	//cout << "Ð”Ð»Ð¸Ð½Ð° ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ñ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚Ð¾Ð¼ ÑƒÐ¼Ð½Ð¾Ð¶ÐµÐ½Ð¸Ñ: " << answerMul.length() << endl;
 	for (int i = 0; i < answerMul.length(); i++)
 	{
 		AnswerMul[i] = AnswerMul[2 * Max(a_length, b_length) - answerMul.length() + i];
@@ -831,7 +891,7 @@ int* LongMulModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	}
 	cout << endl;
 	int* Answer1 = LongDivModul(AnswerMul, M, AnswerMul_length, m_length);
-	/*cout << "Ðåçóëüòàò äåëåíèÿ (À*Â) íà Ì:" << endl;
+	/*cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ð´ÐµÐ»ÐµÐ½Ð¸Ñ (Ð*Ð’) Ð½Ð° Ðœ:" << endl;
 	for (int i = 0; i < Max(AnswerMul_length, m_length); i++)
 	{
 		cout << Answer1[i] << "  ";
@@ -859,7 +919,7 @@ int* LongMulModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	}
 	cout << answer1 << endl;
 	int Answer1_length = answer1.length();
-	//cout << "Äëèíà ñòðîêè ñ ðåçóëüòàòîì äåëåíèÿ (À*Â) íà Ì: " << answer1.length() << endl;
+	//cout << "Ð”Ð»Ð¸Ð½Ð° ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ñ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚Ð¾Ð¼ Ð´ÐµÐ»ÐµÐ½Ð¸Ñ (Ð*Ð’) Ð½Ð° Ðœ: " << answer1.length() << endl;
 	for (int i = 0; i < Max(AnswerMul_length, m_length); i++)
 	{
 		Answer1[i] = Answer1[Max(AnswerMul_length, m_length) - Answer1_length - i];
@@ -870,7 +930,7 @@ int* LongMulModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	}
 	cout << endl;
 	int* Answer = LongSub(AnswerMul, Answer1, AnswerMul_length, Answer1_length);
-	/*cout << "Ðåçóëüòàò ðàçíèöû (À*Â) è Ì*÷àñòêó:" << endl;
+	/*cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ñ€Ð°Ð·Ð½Ð¸Ñ†Ñ‹ (Ð*Ð’) Ð¸ Ðœ*Ñ‡Ð°ÑÑ‚ÐºÑƒ:" << endl;
 	for (int i = 0; i < Max(AnswerMul_length, Answer1_length); i++)
 	{
 		cout << Answer[i] << "  ";
@@ -910,6 +970,119 @@ int* LongMulModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	return Answer;
 }
 
+
+int* KillLastDigits(int A[], int a_length, int number_of_killed_digits)
+{
+	int* NewA = new int[a_length - number_of_killed_digits];
+	for (int i = 0; i < a_length - number_of_killed_digits; i++)
+	{
+		NewA[i] = 0;
+	}
+	for (int i = 0; i < a_length - number_of_killed_digits; i++)
+	{
+		NewA[i] = A[i];
+	}
+	return NewA;
+}
+
+int* BarretReduction(int A[], int B[], int Myu[], int a_length, int b_length, int myu_length)
+{
+	cout << "Ð§Ð¸ÑÐ»Ð¾ Ð:" << endl;
+	for (int i = 0; i < a_length; i++)
+	{
+		cout << A[i] << "  ";
+	}
+	cout << endl;
+	cout << "ÐœÐ¾Ð´ÑƒÐ»ÑŒ:" << endl;
+	for (int i = 0; i < b_length; i++)
+	{
+		cout << B[i] << "  ";
+	}
+	cout << endl;
+	cout << "Ð§Ð¸ÑÐ»Ð¾ ÐœÑŽ:" << endl;
+	for (int i = 0; i < myu_length; i++)
+	{
+		cout << Myu[i] << "  ";
+	}
+	cout << endl;
+	int* Answer = new int[b_length];
+	int* Answer_ = new int[b_length];
+	int* Answer1 = new int[2 * Max(a_length, myu_length)];
+	int* Answer2 = new int[2 * Max(a_length, myu_length)];
+	int* Answer3 = new int[2 * Max(a_length, myu_length)];
+	int* NewA = new int[a_length];
+	for (int i = 0; i < a_length; i++)
+	{
+		NewA[i] = 0;
+	}
+	for (int i = 0; i < b_length; i++)
+	{
+		Answer[i] = 0;
+		Answer_[i] = 0;
+	}
+	for (int i = 0; i < 2 * Max(a_length, myu_length); i++)
+	{
+		Answer1[i] = 0;
+		Answer2[i] = 0;
+		Answer3[i] = 0;
+	}
+	NewA = KillLastDigits(A, a_length, b_length - 1);
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ ÑƒÐ½Ð¸Ñ‡Ñ‚Ð¾Ð¶ÐµÐ½Ð¸Ñ k-1 ÑÐ¸Ð¼Ð²Ð¾Ð»Ð° Ð´Ð»Ñ Ñ‡Ð¸ÑÐ»Ð° Ð:" << endl;
+	for (int i = 0; i < a_length - b_length + 1; i++)
+	{
+		cout << NewA[i] << "  ";
+	}
+	cout << endl;
+	Answer1 = LongMul(NewA, Myu, a_length - b_length + 1, myu_length);
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ ÑƒÐ¼Ð½Ð¾Ð¶ÐµÐ½Ð¸Ñ q Ð½Ð° Ð¼ÑŽ:" << endl;
+	for (int i = 0; i < 2 * Max(a_length - b_length + 1, myu_length); i++)
+	{
+		cout << Answer1[i] << "  ";
+	}
+	cout << endl;
+	Answer2 = KillLastDigits(Answer1, 2 * Max(a_length - b_length + 1, myu_length), b_length + 1);
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ ÑƒÐ½Ð¸Ñ‡Ñ‚Ð¾Ð¶ÐµÐ½Ð¸Ñ k+1 ÑÐ¸Ð¼Ð²Ð¾Ð»Ð° Ð´Ð»Ñ Ñ‡Ð¸ÑÐ»Ð° q:" << endl;
+	for (int i = 0; i < 2 * Max(a_length - b_length + 1, myu_length) - (b_length + 1); i++)
+	{
+		cout << Answer2[i] << "  ";
+	}
+	cout << endl;
+	Answer3 = LongMul(Answer2, B, 2 * Max(a_length - b_length + 1, myu_length) - (b_length + 1), b_length);
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ ÑƒÐ¼Ð½Ð¾Ð¶ÐµÐ½Ð¸Ñ Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ð¾Ð³Ð¾ q Ð½Ð° Ð¼Ð¾Ð´ÑƒÐ»ÑŒ n:" << endl;
+	for (int j = 0; j < 2 * Max(2 * Max(a_length - b_length + 1, myu_length) - (b_length + 1), b_length); j++)
+	{
+		cout << Answer3[j] << "  ";
+	}
+	cout << endl;
+	string Answer3Str = ConvertNumberToStr(Answer3, 2 * Max(2 * Max(a_length - b_length + 1, myu_length) - (b_length + 1), b_length));
+	while (Answer3Str.at(0) == '0')
+	{
+		Answer3Str.erase(0, 1);
+	}
+	cout << Answer3Str << endl;
+	int* Answer3_1 = ConvertStrToNumber(Answer3Str, Answer3Str.length());
+	Answer_ = LongSub(A, Answer3_1, a_length, Answer3Str.length());
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ð²Ñ‹Ñ‡Ð¸ÑÐ»ÐµÐ½Ð¸Ñ r=a-q*n:" << endl;
+	for (int i = 0; i < Max(a_length, Answer3Str.length()); i++)
+	{
+		cout << Answer_[i] << "  ";
+	}
+	cout << endl;
+	string AnswerStr = ConvertNumberToStr(Answer_, Max(a_length, Answer3Str.length()));
+	while (AnswerStr.at(0) == '0')
+	{
+		AnswerStr.erase(0, 1);
+	}
+	cout << AnswerStr << endl;
+	Answer = ConvertStrToNumber(AnswerStr, AnswerStr.length());
+	while ((CompareNum(Answer, B, AnswerStr.length(), b_length) == 1)
+		|| (CompareNum(Answer, B, AnswerStr.length(), b_length) == 2))
+	{
+		Answer = LongSub(Answer, B, AnswerStr.length(), b_length);
+	}
+	return Answer;
+}
+
 int main()
 {
 	setlocale(LC_ALL, "ru_RU");
@@ -929,11 +1102,11 @@ int main()
 	int* integ_A = A;
 	int* integ_B = B;
 	int* integ_M = M;
-	cout << "×èñëî à:" << endl;
+	cout << "Ð§Ð¸ÑÐ»Ð¾ Ð°:" << endl;
 	cin >> a;
-	cout << "×èñëî b:" << endl;
+	cout << "Ð§Ð¸ÑÐ»Ð¾ b:" << endl;
 	cin >> b;
-	cout << "Ìîäóëü m:" << endl;
+	cout << "ÐœÐ¾Ð´ÑƒÐ»ÑŒ m:" << endl;
 	cin >> m;
 	a_length = a.length();
 	b_length = b.length();
@@ -941,25 +1114,25 @@ int main()
 	integ_A = ConvertStrToNumber(a, a_length);
 	integ_B = ConvertStrToNumber(b, b_length);
 	integ_M = ConvertStrToNumber(m, m_length);
-	cout << "×èñëî À:" << endl;
+	cout << "Ð§Ð¸ÑÐ»Ð¾ Ð:" << endl;
 	for (i = 0; i < a_length; i++)
 	{
 		cout << integ_A[i] << " ";
 	}
 	cout << endl;
-	cout << "×èñëî Â:" << endl;
+	cout << "Ð§Ð¸ÑÐ»Ð¾ Ð’:" << endl;
 	for (i = 0; i < b_length; i++)
 	{
 		cout << integ_B[i] << " ";
 	}
 	cout << endl;
-	cout << "Ìîäóëü Ì:" << endl;
+	cout << "ÐœÐ¾Ð´ÑƒÐ»ÑŒ Ðœ:" << endl;
 	for (i = 0; i < m_length; i++)
 	{
 		cout << integ_M[i] << " ";
 	}
 	cout << endl;
-	cout << "Ñóììà ÷èñåë À è Â ïî ìîäóëþ Ì:" << endl;
+	cout << "Ð¡ÑƒÐ¼Ð¼Ð° Ñ‡Ð¸ÑÐµÐ» Ð Ð¸ Ð’ Ð¿Ð¾ Ð¼Ð¾Ð´ÑƒÐ»ÑŽ Ðœ:" << endl;
 	AnswerAddModul = LongAddModul(integ_A, integ_B, integ_M, a_length, b_length, m_length);
 	string Answer1;
 	Answer1 = ConvertNumberToStr(AnswerAddModul, answer_add_modul_length);
@@ -969,7 +1142,7 @@ int main()
 	}
 	cout << Answer1 << endl;
 	delete[]AnswerAddModul;
-	cout << "Ðàçíèöà ÷èñåë À è Â ïî ìîäóëþ Ì:" << endl;
+	cout << "Ð Ð°Ð·Ð½Ð¸Ñ†Ð° Ñ‡Ð¸ÑÐµÐ» Ð Ð¸ Ð’ Ð¿Ð¾ Ð¼Ð¾Ð´ÑƒÐ»ÑŽ Ðœ:" << endl;
 	AnswerSubModul = LongSubModul(integ_A, integ_B, integ_M, a_length, b_length, m_length);
 	string Answer2;
 	Answer2 = ConvertNumberToStr(AnswerSubModul, answer_sub_modul_length);
@@ -979,7 +1152,7 @@ int main()
 	}
 	cout << Answer2 << endl;
 	delete[]AnswerSubModul;
-	cout << "Çàïîëíÿåì ïî íîâîé ÷èñëî À, ïîñêîëüêó îíî ïîñëå âûïîëíåíèÿ ðàçíèöû èçìåíèëîñü:" << endl;
+	cout << "Ð—Ð°Ð¿Ð¾Ð»Ð½ÑÐµÐ¼ Ð¿Ð¾ Ð½Ð¾Ð²Ð¾Ð¹ Ñ‡Ð¸ÑÐ»Ð¾ Ð, Ð¿Ð¾ÑÐºÐ¾Ð»ÑŒÐºÑƒ Ð¾Ð½Ð¾ Ð¿Ð¾ÑÐ»Ðµ Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ñ Ñ€Ð°Ð·Ð½Ð¸Ñ†Ñ‹ Ð¸Ð·Ð¼ÐµÐ½Ð¸Ð»Ð¾ÑÑŒ:" << endl;
 	for (int i = 0; i < a.length(); i++)
 	{
 		if (isdigit(a.at(i)) == 0)
@@ -995,7 +1168,64 @@ int main()
 		cout << integ_A[i] << "  ";
 	}
 	cout << endl;
-	/*cout << "Ðåçóëüòàò óìíîæåíèÿ ÷èñåë À è Â ïî ìîäóëþ Ì:" << endl;
+	cout << "Ð¡Ñ‡Ð¸Ñ‚Ð°ÐµÐ¼ ÐºÐ¾ÑÑ„Ð¸Ñ†Ð¸ÐµÐ½Ñ‚ Ð¼ÑŽ Ð´Ð»Ñ Ñ€ÐµÐ´ÑƒÐºÑ†Ð¸Ð¸ Ð‘Ð°Ñ€Ñ€ÐµÑ‚Ð°" << endl;
+	string betta;
+	int betta_length;
+	int Betta[1000];
+	int* integ_Betta = Betta;
+	cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÑÐ¸ÑÑ‚ÐµÐ¼Ñƒ Ð¸ÑÑ‡Ð¸ÑÐ»ÐµÐ½Ð¸Ñ Ð±ÐµÑ‚Ñ‚Ð° Ð² 16-Ñ‡Ð½Ð¾Ð¼ Ð²Ð¸Ð´Ðµ:" << endl;
+	cin >> betta;
+	betta_length = betta.length();
+	integ_Betta = ConvertStrToNumber(betta, betta_length);
+	cout << "Ð’Ð¾Ð·Ð²Ð¾Ð´Ð¸Ð¼ Ð±ÐµÑ‚Ñ‚Ð° Ð² ÑÑ‚ÐµÐ¿ÐµÐ½ÑŒ 2k:" << endl;
+	int K = a_length / 2;
+	int power[1];
+	power[0] = 2 * K;
+	cout << power[0] << endl;
+	int* integ_power = power;
+	int* AnswerLongPower = LongPower(integ_Betta, integ_power, betta_length, 1);
+	string AnswerBettaPower;
+	AnswerBettaPower = ConvertNumberToStr(AnswerLongPower, 500 * betta_length);
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ð²Ð¾Ð·Ð²ÐµÐ´ÐµÐ½Ð¸Ñ Ð±ÐµÑ‚Ñ‚Ð° Ð² ÑÑ‚ÐµÐ¿ÐµÐ½ÑŒ 2k:" << endl;
+	while (AnswerBettaPower.at(0) == '0')
+	{
+		AnswerBettaPower.erase(0, 1);
+	}
+	cout << AnswerBettaPower << endl;
+	int bettaPower_length = AnswerBettaPower.length();
+	int* AnswerBettaPowerStr = ConvertStrToNumber(AnswerBettaPower, bettaPower_length);
+	cout << "Ð”ÐµÐ»Ð¸Ð¼ Ð±ÐµÑ‚Ñ‚Ð°^2k Ð½Ð° Ð¼Ð¾Ð´ÑƒÐ»ÑŒ:" << endl;
+	int* AnswerLongDivBetta = LongDivModul(AnswerBettaPowerStr, integ_B, bettaPower_length, b_length);
+	AnswerLongDivBetta[3] = AnswerLongDivBetta[3] + 1;
+	string MyuRevers;
+	MyuRevers = ConvertNumberToStr(AnswerLongDivBetta, bettaPower_length);
+	cout << "ÐšÐ¾ÑÑ„Ð¸Ñ†Ð¸ÐµÐ½Ñ‚ Ð¼ÑŽ Ñ€Ð°Ð²ÐµÐ½:" << endl;
+	while (MyuRevers.at(0) == '0')
+	{
+		MyuRevers.erase(0, 1);
+	}
+	cout << MyuRevers << endl;
+	//AnswerLongDivBetta[4] = AnswerLongDivBetta[4] + 1;
+	string Myu;
+	for (int i = 0; i < MyuRevers.length(); i++)
+	{
+		Myu = Myu + MyuRevers.at(MyuRevers.length() - i - 1);
+	}
+	cout << Myu << endl;
+	int myu_length = Myu.length();
+	int MyuArr[1000];
+	int* integ_Myu = MyuArr;
+	integ_Myu = ConvertStrToNumber(Myu, myu_length);
+	for (int i = 0; i < myu_length; i++)
+	{
+		cout << integ_Myu[i] << "  ";
+	}
+	cout << endl;
+	int* AnswerModule = BarretReduction(integ_A, integ_B, integ_Myu, a_length, b_length, myu_length);
+	string Answer3 = ConvertNumberToStr(AnswerModule, b_length);
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ð²Ñ‹Ñ‡Ð¸ÑÐ»ÐµÐ½Ð¸Ñ Ñ‡Ð¸ÑÐ»Ð° Ð Ð¿Ð¾ Ð¼Ð¾Ð´ÑƒÐ»ÑŽ M:" << endl;
+	cout << Answer3 << endl;
+	/*cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ ÑƒÐ¼Ð½Ð¾Ð¶ÐµÐ½Ð¸Ñ Ñ‡Ð¸ÑÐµÐ» Ð Ð¸ Ð’ Ð¿Ð¾ Ð¼Ð¾Ð´ÑƒÐ»ÑŽ Ðœ:" << endl;
 	int* AnswerMulModul = LongMulModul(integ_A, integ_B, integ_M, a_length, b_length, m_length);
 	for (int i = 0; i < answer_mul_modul_length; i++)
 	{
@@ -1011,25 +1241,25 @@ int main()
 	delete[]AnswerMulModul;
 	/*cout << "===========================================================================";
 	cout << endl;
-	cout << "Ïðîâåðêè ïðàâèëüíîñòè âûïîëíåíèÿ" << endl;
-	cout << "Ïóíêò 1: (a+b)*c mod n= c*(a+b) mod n= a*c+ b*c mod n" << endl;
+	cout << "ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ¸ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾ÑÑ‚Ð¸ Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ñ" << endl;
+	cout << "ÐŸÑƒÐ½ÐºÑ‚ 1: (a+b)*c mod n= c*(a+b) mod n= a*c+ b*c mod n" << endl;
 	string c;
 	int c_length;
 	int C[1000];
 	int* integ_C = C;
-	cout << "×èñëî c:" << endl;
+	cout << "Ð§Ð¸ÑÐ»Ð¾ c:" << endl;
 	cin >> c;
 	c_length = c.length();
 	integ_C = ConvertStrToNumber(c, c_length);
-	cout << "×èñëî C:" << endl;
+	cout << "Ð§Ð¸ÑÐ»Ð¾ C:" << endl;
 	for (i = 0; i < c_length; i++)
 	{
 		cout << integ_C[i] << " ";
 	}
 	cout << endl;
-	cout << "Ðåøàåì âûðàæåíèå (a+b)*c" << endl;
+	cout << "Ð ÐµÑˆÐ°ÐµÐ¼ Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ðµ (a+b)*c" << endl;
 	int* AnswerAdd1 = LongAdd(integ_A, integ_B, a_length, b_length);
-	cout << "Ðåçóëüòàò ñóììèðîâàíèÿ ÷èñåë À è Â:" << endl;
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ ÑÑƒÐ¼Ð¼Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ñ Ñ‡Ð¸ÑÐµÐ» Ð Ð¸ Ð’:" << endl;
 	int AnswerAdd1_length;
 	if (AnswerAdd1[Max(a_length, b_length) + 1] == 100)
 	{
@@ -1049,7 +1279,7 @@ int main()
 		}
 	}
 	int* AnswerMul1 = LongMul(AnswerAdd1, integ_C, AnswerAdd1_length, c_length);
-	cout << "Ðåçóëüòàò âûðàæåíèÿ (à+b)*c :" << endl;
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ñ (Ð°+b)*c :" << endl;
 	string equation1 = ConvertNumberToStr(AnswerMul1, 2 * Max(AnswerAdd1_length, c_length));
 	while (equation1.at(0) == '0')
 	{
@@ -1057,16 +1287,16 @@ int main()
 	}
 	cout << equation1 << endl;
 	cout << endl;
-	cout << "Ðåøàåì âûðàæåíèå c*(a+b)" << endl;
-	cout << "Äëèíà îòâåòà A+B = " << AnswerAdd1_length << endl;
+	cout << "Ð ÐµÑˆÐ°ÐµÐ¼ Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ðµ c*(a+b)" << endl;
+	cout << "Ð”Ð»Ð¸Ð½Ð° Ð¾Ñ‚Ð²ÐµÑ‚Ð° A+B = " << AnswerAdd1_length << endl;
 	int* AnswerAdd3 = LongAdd(integ_A, integ_B, a_length, b_length);
-	/*cout << "×èñëî C:" << endl;
+	/*cout << "Ð§Ð¸ÑÐ»Ð¾ C:" << endl;
 	for (i = 0; i < c_length; i++)
 	{
 		cout << integ_C[i] << " ";
 	}
 	cout << endl;*/
-	/*cout << "Ðåçóëüòàò ñóììèðîâàíèÿ ÷èñåë À è Â:" << endl;
+	/*cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ ÑÑƒÐ¼Ð¼Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ñ Ñ‡Ð¸ÑÐµÐ» Ð Ð¸ Ð’:" << endl;
 	int AnswerAdd3_length;
 	if (AnswerAdd3[Max(a_length, b_length) + 1] == 100)
 	{
@@ -1096,7 +1326,7 @@ int main()
 		cout << AnswerMul2[i] << "  ";
 	}
 	cout << endl;
-	cout << "Ðåçóëüòàò âûðàæåíèÿ c*(à+b) :" << endl;
+	cout << "Ð ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ñ c*(Ð°+b) :" << endl;
 	string equation2 = ConvertNumberToStr(AnswerMul2, 2 * Max(AnswerAdd1_length, c_length));
 	while (equation2.at(0) == '0')
 	{
@@ -1104,7 +1334,7 @@ int main()
 	}
 	cout << equation2 << endl;
 	cout << endl;
-	cout << "Ðåøàåì âûðàæåíèå a*c+b*c" << endl;
+	cout << "Ð ÐµÑˆÐ°ÐµÐ¼ Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ðµ a*c+b*c" << endl;
 	int* AnswerMul3 = LongMul(integ_A, integ_C, a_length, c_length);
 	int* AnswerMul4 = LongMul(integ_B, integ_C, b_length, c_length);
 	int* AnswerAdd2 = LongAdd(AnswerMul3, AnswerMul4, 2 * Max(a_length, c_length), 2 * Max(b_length, c_length));
