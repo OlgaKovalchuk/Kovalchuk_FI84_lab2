@@ -864,112 +864,6 @@ int* LongSubModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	return Answer;
 }*/
 
-int* LongMulModul(int A[], int B[], int M[], int a_length, int b_length, int m_length)
-{
-	int* AnswerMul = LongMul(A, B, a_length, b_length);
-	/*cout << "Результат умножения А на В:" << endl;
-	for (int i = 0; i < 2 * Max(a_length, b_length); i++)
-	{
-		cout << AnswerMul[i] << "  ";
-	}
-	cout << endl;*/
-	string answerMul = ConvertNumberToStr(AnswerMul, 2 * Max(a_length, b_length));
-	while (answerMul.at(0) == '0')
-	{
-		answerMul.erase(0, 1);
-	}
-	cout << answerMul << endl;
-	int AnswerMul_length = answerMul.length();
-	//cout << "Длина строки с результатом умножения: " << answerMul.length() << endl;
-	for (int i = 0; i < answerMul.length(); i++)
-	{
-		AnswerMul[i] = AnswerMul[2 * Max(a_length, b_length) - answerMul.length() + i];
-	}
-	for (int i = 0; i < AnswerMul_length; i++)
-	{
-		cout << AnswerMul[i] << "  ";
-	}
-	cout << endl;
-	int* Answer1 = LongDivModul(AnswerMul, M, AnswerMul_length, m_length);
-	/*cout << "Результат деления (А*В) на М:" << endl;
-	for (int i = 0; i < Max(AnswerMul_length, m_length); i++)
-	{
-		cout << Answer1[i] << "  ";
-	}
-	cout << endl;*/
-	string answer1 = ConvertNumberToStr(Answer1, Max(AnswerMul_length, m_length));
-	int zeroes1 = 0;
-	for (int i = 0; i < answer1.length(); i++)
-	{
-		if (answer1.at(i) == '0')
-		{
-			zeroes1++;
-		}
-	}
-	if (zeroes1 != answer1.length())
-	{
-		while (answer1.at(0) == '0')
-		{
-			answer1.erase(0, 1);
-		}
-	}
-	else if (zeroes1 == answer1.length())
-	{
-		answer1.erase(0, answer1.length() - 1);
-	}
-	cout << answer1 << endl;
-	int Answer1_length = answer1.length();
-	//cout << "Длина строки с результатом деления (А*В) на М: " << answer1.length() << endl;
-	for (int i = 0; i < Max(AnswerMul_length, m_length); i++)
-	{
-		Answer1[i] = Answer1[Max(AnswerMul_length, m_length) - Answer1_length - i];
-	}
-	for (int i = 0; i < Answer1_length; i++)
-	{
-		cout << Answer1[i] << "  ";
-	}
-	cout << endl;
-	int* Answer = LongSub(AnswerMul, Answer1, AnswerMul_length, Answer1_length);
-	/*cout << "Результат разницы (А*В) и М*частку:" << endl;
-	for (int i = 0; i < Max(AnswerMul_length, Answer1_length); i++)
-	{
-		cout << Answer[i] << "  ";
-	}
-	cout << endl;*/
-	string answer = ConvertNumberToStr(Answer, Max(AnswerMul_length, Answer1_length));
-	int zeroes2 = 0;
-	for (int i = 0; i < answer.length(); i++)
-	{
-		if (answer.at(i) == '0')
-		{
-			zeroes2++;
-		}
-	}
-	if (zeroes2 != answer.length())
-	{
-		while (answer.at(0) == '0')
-		{
-			answer.erase(0, 1);
-		}
-	}
-	else if (zeroes2 == answer.length())
-	{
-		answer.erase(0, answer.length() - 1);
-	}
-	cout << answer << endl;
-	answer_mul_modul_length = answer.length();
-	for (int i = 0; i < answer_mul_modul_length; i++)
-	{
-		Answer[i] = Answer[Max(AnswerMul_length, Answer1_length) - answer_mul_modul_length + i];
-	}
-	for (int i = 0; i < answer_mul_modul_length; i++)
-	{
-		cout << Answer[i] << "  ";
-	}
-	cout << endl;
-	return Answer;
-}
-
 
 int* KillLastDigits(int A[], int a_length, int number_of_killed_digits)
 {
@@ -1083,6 +977,46 @@ int* BarretReduction(int A[], int B[], int Myu[], int a_length, int b_length, in
 	return Answer;
 }
 
+
+int* LongMulModul(int A[], int B[], int Modul[], int a_length, int b_length, int module_length, int Myu[], int myu_length)
+{
+	int* Answer = new int[module_length];
+	int* Answer1 = new int[module_length];
+	for (int i = 0; i < module_length; i++)
+	{
+		Answer[i] = 0;
+		Answer1[i] = 0;
+	}
+	Answer1 = LongMul(A, B, module_length, module_length);
+	cout << "Результат умножения числа А на число В:" << endl;
+	for (int i = 0; i < 2*module_length; i++)
+	{
+		cout << Answer1[i] << "  ";
+	}
+	cout << endl;
+	string AmulB;
+	AmulB = ConvertNumberToStr(Answer1, 2*module_length);
+	cout << AmulB<< endl;
+	Answer = BarretReduction(Answer1, Modul, Myu, 2 * module_length, module_length, myu_length);
+	return Answer;
+}
+
+int* PowerToSquareModul(int A[], int Module[], int a_length, int module_length, int Myu[], int myu_length)
+{
+	int* Answer = new int[module_length];
+	int* Answer1 = new int[2 * a_length];
+	for (int i = 0; i < 2 * a_length; i++)
+	{
+		Answer1[i] = 0;
+	}
+	for (int i = 0; i < module_length; i++)
+	{
+		Answer[i] = 0;
+	}
+	Answer = LongMulModul(A, A,Module, a_length, a_length, module_length, Myu, myu_length);
+	return Answer;
+}
+
 int main()
 {
 	setlocale(LC_ALL, "ru_RU");
@@ -1132,7 +1066,7 @@ int main()
 		cout << integ_M[i] << " ";
 	}
 	cout << endl;
-	cout << "Сумма чисел А и В по модулю М:" << endl;
+	/*cout << "Сумма чисел А и В по модулю М:" << endl;
 	AnswerAddModul = LongAddModul(integ_A, integ_B, integ_M, a_length, b_length, m_length);
 	string Answer1;
 	Answer1 = ConvertNumberToStr(AnswerAddModul, answer_add_modul_length);
@@ -1143,15 +1077,25 @@ int main()
 	cout << Answer1 << endl;
 	delete[]AnswerAddModul;
 	cout << "Разница чисел А и В по модулю М:" << endl;
-	AnswerSubModul = LongSubModul(integ_A, integ_B, integ_M, a_length, b_length, m_length);
-	string Answer2;
-	Answer2 = ConvertNumberToStr(AnswerSubModul, answer_sub_modul_length);
-	while (Answer2.at(0) == '0')
+	if (CompareNum(integ_A, integ_B, a_length, b_length) == 0)
 	{
-		Answer2.erase(0, 1);
+		cout << "Мы не можем поделить меньшее число на большее!!!" << endl;
 	}
-	cout << Answer2 << endl;
-	delete[]AnswerSubModul;
+	else if (CompareNum(integ_A, integ_B, a_length, b_length) == 1 || CompareNum(integ_A, integ_B, a_length, b_length) == 2)
+	{
+		AnswerSubModul = LongSubModul(integ_A, integ_B, integ_M, a_length, b_length, m_length);
+		string Answer2;
+		int compare = CompareNum(integ_A, integ_B, a_length, b_length);
+		cout << "Число А больше числа В? Ответ: " << compare << endl;
+		cout << "Результат отнимания от числа А числа В:" << endl;
+		Answer2 = ConvertNumberToStr(AnswerSubModul, answer_sub_modul_length);
+		while (Answer2.at(0) == '0')
+		{
+			Answer2.erase(0, 1);
+		}
+		cout << Answer2 << endl;
+		delete[]AnswerSubModul;
+	}
 	cout << "Заполняем по новой число А, поскольку оно после выполнения разницы изменилось:" << endl;
 	for (int i = 0; i < a.length(); i++)
 	{
@@ -1167,7 +1111,7 @@ int main()
 	{
 		cout << integ_A[i] << "  ";
 	}
-	cout << endl;
+	cout << endl;*/
 	cout << "Считаем коэфициент мю для редукции Баррета" << endl;
 	string betta;
 	int betta_length;
@@ -1195,16 +1139,24 @@ int main()
 	int bettaPower_length = AnswerBettaPower.length();
 	int* AnswerBettaPowerStr = ConvertStrToNumber(AnswerBettaPower, bettaPower_length);
 	cout << "Делим бетта^2k на модуль:" << endl;
-	int* AnswerLongDivBetta = LongDivModul(AnswerBettaPowerStr, integ_B, bettaPower_length, b_length);
-	AnswerLongDivBetta[3] = AnswerLongDivBetta[3] + 1;
+	int* AnswerLongDivBetta = LongDivModul(AnswerBettaPowerStr, integ_M, bettaPower_length, m_length);
+	AnswerLongDivBetta[3] = AnswerLongDivBetta[3]+1;
+	//AnswerLongDivBetta[2] = AnswerLongDivBetta[2] - 1;
 	string MyuRevers;
 	MyuRevers = ConvertNumberToStr(AnswerLongDivBetta, bettaPower_length);
+	cout << endl;
 	cout << "Коэфициент мю равен:" << endl;
+	for (int i = 0; i < Max(bettaPower_length, m_length); i++)
+	{
+		cout << AnswerLongDivBetta[i] << "  ";
+	}
+	cout << endl;
 	while (MyuRevers.at(0) == '0')
 	{
 		MyuRevers.erase(0, 1);
 	}
 	cout << MyuRevers << endl;
+	cout << AnswerLongDivBetta[4] << endl;
 	//AnswerLongDivBetta[4] = AnswerLongDivBetta[4] + 1;
 	string Myu;
 	for (int i = 0; i < MyuRevers.length(); i++)
@@ -1221,10 +1173,68 @@ int main()
 		cout << integ_Myu[i] << "  ";
 	}
 	cout << endl;
-	int* AnswerModule = BarretReduction(integ_A, integ_B, integ_Myu, a_length, b_length, myu_length);
-	string Answer3 = ConvertNumberToStr(AnswerModule, b_length);
+	int* ModuleA = BarretReduction(integ_A, integ_M, integ_Myu, a_length, m_length, myu_length);
+	string Answer3 = ConvertNumberToStr(ModuleA, m_length);
+	int* ModuleB = BarretReduction(integ_B, integ_M, integ_Myu, b_length, m_length, myu_length);
+	string Answer4 = ConvertNumberToStr(ModuleB, m_length);
 	cout << "Результат вычисления числа А по модулю M:" << endl;
 	cout << Answer3 << endl;
+	cout << "Результат вычисления числа B по модулю M:" << endl;
+	cout << Answer4 << endl;
+	cout << "Заполняем по новой число А, поскольку оно после выполнения разницы во время редукции Баррета изменилось:" << endl;
+	for (int i = 0; i < a.length(); i++)
+	{
+		if (isdigit(a.at(i)) == 0)
+		{
+			integ_A[i] = a.at(i) - '0' - 7;
+		}
+		else {
+			integ_A[i] = a.at(i) - '0';
+		}
+	}
+	for (int i = 0; i < a_length; i++)
+	{
+		cout << integ_A[i] << "  ";
+	}
+	cout << endl;
+	cout << "Заполняем по новой число B, поскольку оно после выполнения разницы во время редукции Баррета изменилось:" << endl;
+	for (int i = 0; i < b.length(); i++)
+	{
+		if (isdigit(b.at(i)) == 0)
+		{
+			integ_B[i] = b.at(i) - '0' - 7;
+		}
+		else {
+			integ_B[i] = b.at(i) - '0';
+		}
+	}
+	for (int i = 0; i < b_length; i++)
+	{
+		cout << integ_B[i] << "  ";
+	}
+	cout << "Считаем  (А*В) mod M:" << endl;
+	int* AnswerMulModule = LongMulModul(ModuleA, ModuleB, integ_M, m_length, m_length, m_length, integ_Myu, myu_length);
+	for (int i = 0; i < m_length; i++)
+	{
+		cout << AnswerMulModule[i] << "  ";
+	}
+	cout << endl;
+	string Answer5 = ConvertNumberToStr(AnswerMulModule, m_length);
+	cout << "Результат умножения чисел А и В по модулю M:" << endl;
+	cout << Answer5<< endl;
+	delete[]AnswerMulModule;
+	cout << "Возводим число А в квадрат по модулю М:" << endl;
+	int* AnswerPowerToSquareModul = PowerToSquareModul(ModuleA, integ_M, m_length, m_length, integ_Myu, myu_length);
+	cout << "Результат возведения числа А в квадрат по модулю М:" << endl;
+	for (int i = 0; i < m_length; i++)
+	{
+		cout << AnswerPowerToSquareModul[i] << "  ";
+	}
+	cout << endl;
+	string Answer6 = ConvertNumberToStr(AnswerPowerToSquareModul, m_length);
+	cout << Answer6 << endl;
+	delete[]ModuleA;
+	delete[]ModuleB;
 	/*cout << "Результат умножения чисел А и В по модулю М:" << endl;
 	int* AnswerMulModul = LongMulModul(integ_A, integ_B, integ_M, a_length, b_length, m_length);
 	for (int i = 0; i < answer_mul_modul_length; i++)
