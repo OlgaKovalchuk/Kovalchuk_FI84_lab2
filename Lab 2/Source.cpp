@@ -1505,9 +1505,9 @@ int main()
 	int* ModuleB = BarretReduction(integ_B, integ_M, integ_Myu, b_length, m_length, myu_length);
 	string Answer4 = ConvertNumberToStr(ModuleB, m_length);
 	cout << "Результат вычисления числа А по модулю M:" << endl;
-	cout << Answer3 << endl;
+	cout << Answer3 << endl << endl;;
 	cout << "Результат вычисления числа B по модулю M:" << endl;
-	cout << Answer4 << endl;
+	cout << Answer4 << endl << endl;
 	cout << "Заполняем по новой число А, поскольку оно после выполнения разницы во время редукции Баррета изменилось:" << endl;
 	for (int i = 0; i < a.length(); i++)
 	{
@@ -1539,6 +1539,7 @@ int main()
 	{
 		cout << integ_B[i] << "  ";
 	}
+	cout << endl << endl;
 	cout << "Считаем  (А*В) mod M:" << endl;
 	int* AnswerMulModule = LongMulModul(ModuleA, ModuleB, integ_M, m_length, m_length, m_length, integ_Myu, myu_length);
 	for (int i = 0; i < m_length; i++)
@@ -1550,6 +1551,7 @@ int main()
 	cout << "Результат умножения чисел А и В по модулю M:" << endl;
 	cout << Answer5<< endl;
 	delete[]AnswerMulModule;
+	cout << endl << endl;
 	cout << "Возводим число А в квадрат по модулю М:" << endl;
 	int* AnswerPowerToSquareModul = PowerToSquareModul(ModuleA, integ_M, m_length, m_length, integ_Myu, myu_length);
 	cout << "Результат возведения числа А в квадрат по модулю М:" << endl;
@@ -1560,6 +1562,7 @@ int main()
 	cout << endl;
 	string Answer6 = ConvertNumberToStr(AnswerPowerToSquareModul, m_length);
 	cout << Answer6 << endl;
+	cout << endl << endl;
 	cout << "Возводим число А в степень, равную числу В, по модулю:" << endl;
 	int* AnswerLongPowerMod = LongModPowerBarret(ModuleA, integ_B, integ_M, integ_Myu, m_length, b_length, m_length, myu_length);
 	cout << "Результат возведения числа А в степень, равную числу В, по модулю:" << endl;
@@ -1620,7 +1623,7 @@ int main()
 			cout << AnswerAdd1[i] << "  ";
 		}
 	}*/
-	for (int i = 0; i < m_length; i++)
+	/*for (int i = 0; i < m_length; i++)
 	{
 		cout << AnswerAdd1[i] << "  ";
 	}
@@ -1632,9 +1635,9 @@ int main()
 	{
 		equation1.erase(0, 1);
 	}*/
-	cout << equation1 << endl;
+	/*cout << equation1 << endl;
 	cout << endl;
-	cout << "Решаем выражение c*(a+b)" << endl;
+	cout << "Решаем выражение c*(a+b)" << endl;*/
 	//cout << "Длина ответа A+B mod M= " << m_length << endl;
 	//int* AnswerAdd3 = LongAdd(integ_A, integ_B, a_length, b_length);
 	/*cout << "Число C:" << endl;
@@ -1643,7 +1646,7 @@ int main()
 		cout << integ_C[i] << " ";
 	}
 	cout << endl;*/
-	cout << "Результат суммирования чисел А и В по модулю М:" << endl;
+	//cout << "Результат суммирования чисел А и В по модулю М:" << endl;
 	
 	/*if (AnswerAdd3[Max(a_length, b_length) + 1] == 100)
 	{
@@ -1658,7 +1661,7 @@ int main()
 		cout << AnswerAdd3[i] << " ";
 	}
 	cout << endl;*/
-	int* AnswerMul2;
+	/*int* AnswerMul2;
 	for (int i = 0; i < m_length; i++)
 	{
 		cout << AnswerAdd1[i] << "  ";
