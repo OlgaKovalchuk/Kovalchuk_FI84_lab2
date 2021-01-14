@@ -13,6 +13,26 @@ int answer_add_modul_length;
 int answer_sub_modul_length;
 int answer_mul_modul_length;
 int answer_mul_on_modul_length;
+int answer_gcd_length;
+
+bool StringOfZeroes(string a)
+{
+	int zeroes = 0;
+	for (int i = 0; i < a.length(); i++)
+	{
+		if (a.at(i) != '0')
+		{
+			zeroes++;
+		}
+	}
+	if (zeroes == 0)
+	{
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
 int Max(int a, int b)
 {
@@ -417,7 +437,7 @@ int* ConvertStrToNumber(string a, int a_length)
 
 int CompareNum(int A[], int B[], int a_length, int b_length)
 {
-	int answer;
+	int answer=0;
 	if (a_length > b_length)
 	{
 		answer = 1;
@@ -454,12 +474,13 @@ int CompareNum(int A[], int B[], int a_length, int b_length)
 			}
 			else if (i != Max(a_length, b_length) && A[i] > B[i])
 			{
-				answer = 0;
+				answer = 1;
 			}
 		}
 	}
 	return answer;
 }
+
 
 int* LongShiftBitsToHigh(int B[], int number_of_cells_shift, int b_length)
 {
@@ -505,6 +526,20 @@ int* LongDivModul(int A[], int B[], int a_length, int b_length)
 		//cout <<"Ostacha["<<i<<"] = "<< Ostacha[i] << endl;
 	}
 	int length_Ostacha = SizeOfArray(Ostacha);
+	if (b_length == 1 && B[0] == 1)
+	{
+		for (int i = 0; i < a_length; i++)
+		{
+			Answer[i] = A[i];
+		}
+		Ostacha[length_Ostacha - 1] = 0;
+		for (int i = 0; i < length_Ostacha - 1; i++)
+		{
+			Ostacha[i];
+		}
+		Ostacha_str = "0";
+		return Answer;
+	}
 	int p = 0;
 	while (CompareNum(Ostacha, B, a_length, b_length) == 1 || CompareNum(Ostacha, B, a_length, b_length) == 2)
 	{
@@ -593,6 +628,19 @@ int* LongDivModul(int A[], int B[], int a_length, int b_length)
 		}
 		cout << endl;*/
 		p++;
+	}
+	if (a_length == b_length && CompareNum(A, B, a_length, b_length) == 2)
+	{
+		Chastka[a_length - 1] = 1;
+		for (int j = 0; j < a_length - 1; j++)
+		{
+			Chastka[j] = 0;
+		}
+		Ostacha[length_Ostacha - 1] = 0;
+		for (int j = 0; j < length_Ostacha - 1; j++)
+		{
+			Ostacha[j] = 0;
+		}
 	}
 	Ostacha_str = ConvertNumberToStr(Ostacha, length_Ostacha);
 	return Chastka;
@@ -815,55 +863,6 @@ int* LongSubModul(int A[], int B[], int M[], int a_length, int b_length, int m_l
 	return Answer;
 }
 
-/*int* gcd(int A[], int B[], int a_length, int b_length)
-{
-	int* Answer;
-	int* R0 = new int[a_length];
-	int* R1 = new int[b_length];
-	int* R_0 = new int[b_length];
-	int* R_1 = new int[b_length];
-	int* Q = new int[a_length];
-	int q_length;
-	for (int i = 0; i < a_length; i++)
-	{
-		R0[i] = A[i];
-		Q[i] = 0;
-	}
-	for (int i = 0; i < b_length; i++)
-	{
-		R1[i] = B[i];
-		R_0[i] = 0;
-		R_1[i] = 0;
-	}
-	int i = 0;
-	int is_zeroe = b_length;
-	while (is_zeroe != 0)
-	{
-		Q = LongDivModul(R0, R1, a_length, b_length);
-		cout << "Результат деления R" << i << " на R" << i + 1 << ":" << endl;
-		for (int i = 0; i < a_length; i++)
-		{
-			cout << Q[i] << "  ";
-		}
-		cout << endl;
-		string q = ConvertNumberToStr(Q, a_length);
-		while (q.at(0) == '0')
-		{
-			q.erase(0, 1);
-		}
-		q_length = q.length();
-		int* AnswerMul = LongMul(B, Q, b_length, q_length);
-		for (int i = 0; i < b_length; i++)
-		{
-			if (R_1[i] == 0)
-			{
-				is_zeroe--;
-			}
-		}
-	}
-	return Answer;
-}*/
-
 
 int* KillLastDigits(int A[], int a_length, int number_of_killed_digits)
 {
@@ -969,10 +968,17 @@ int* BarretReduction(int A[], int B[], int Myu[], int a_length, int b_length, in
 	}
 	cout << AnswerStr << endl;
 	Answer = ConvertStrToNumber(AnswerStr, AnswerStr.length());
-	while ((CompareNum(Answer, B, AnswerStr.length(), b_length) == 1)
-		|| (CompareNum(Answer, B, AnswerStr.length(), b_length) == 2))
+	if (AnswerStr.length() < b_length || (AnswerStr.length() == b_length && Answer[0]<B[0]))
 	{
-		Answer = LongSub(Answer, B, AnswerStr.length(), b_length);
+		return Answer;
+	}
+	else
+	{
+		while ((CompareNum(Answer, B, AnswerStr.length(), b_length) == 1)
+			|| (CompareNum(Answer, B, AnswerStr.length(), b_length) == 2))
+		{
+			Answer = LongSub(Answer, B, AnswerStr.length(), b_length);
+		}
 	}
 	return Answer;
 }
@@ -1016,6 +1022,280 @@ int* PowerToSquareModul(int A[], int Module[], int a_length, int module_length, 
 	Answer = LongMulModul(A, A,Module, a_length, a_length, module_length, Myu, myu_length);
 	return Answer;
 }
+
+int* LongModPowerBarret(int A[], int B[], int Module[], int Myu[], int a_length, int b_length, int module_length, int myu_length)
+{
+	int* Answer = new int[module_length];
+	int* Answer1 = new int[module_length];
+	int* DvoichB = DvoichnaForma(B, b_length);
+	string DvoichB_str = ConvertNumberToStr(DvoichB, SizeOfArray(DvoichB));
+	cout << DvoichB_str << endl;
+	int first_1 = DvoichB_str.find('1');
+	cout << "first_1 = " << first_1 << endl;
+	for (int i = 0; i < module_length; i++)
+	{
+		Answer[i] = 0;
+		Answer1[i] = A[i];
+	}
+	for (int i = first_1+1; i < 4*b_length; i++)
+	{
+		Answer = PowerToSquareModul(Answer1, Module, module_length, module_length, Myu, myu_length);
+		for (int k = 0; k < module_length; k++)
+		{
+			Answer1[k] = Answer[k];
+		}
+		if (DvoichB[i] == 1)
+		{
+			Answer = LongMulModul(Answer1, A, Module, module_length, module_length, module_length, Myu, myu_length);
+			for (int k = 0; k < module_length; k++)
+			{
+				Answer1[k] = Answer[k];
+			}
+		}
+	}
+	return Answer1;
+}
+
+int* GCD(int A[], int B[], int a_length, int b_length)
+{
+	cout << b_length << endl;
+	int* Answer = new int[b_length];
+	int* CopyA = new int[a_length];
+	int* CopyB = new int[b_length];
+	int* Answer1 = new int[b_length];
+	int answer_length = b_length;
+	int copyb_length = b_length;
+	for (int i = 0; i < b_length; i++)
+	{
+		Answer[i] = B[i];
+		Answer1[i] = 0;
+		CopyB[i] = B[i];
+	}
+	for (int j = 0; j < a_length; j++)
+	{
+		CopyA[j] = A[j];
+	}
+	Answer1 = LongDivModul(CopyA, B, a_length, b_length);
+	cout << "Поделили число А на число В:" << endl;
+	for (int i = 0; i < a_length; i++)
+	{
+		cout << Answer1[i] << "  ";
+	}
+	cout << endl;
+	cout << "Остаток равен:" << endl;
+	int*Ostacha = ConvertStrToNumber(Ostacha_str, Ostacha_str.length());
+	cout << Ostacha_str << endl;
+	for (int i = 0; i < b_length; i++)
+	{
+		Answer[i] = Ostacha[i];
+	}
+	while (StringOfZeroes(Ostacha_str) != true)
+	{
+		cout << "Число, которое делим:" << endl;
+		for (int i = 0; i < copyb_length; i++)
+		{
+			cout << CopyB[i] << "  ";
+		}
+		cout << endl;
+		if (CopyB[0] == 0)
+		{
+			for (int j = 0; j < copyb_length; j++)
+			{
+				CopyB[j] = CopyB[j + 1];
+			}
+			copyb_length--;
+		}
+		cout << "Число, на которое делим:" << endl;
+		for (int i = 0; i < answer_length; i++)
+		{
+			cout << Answer[i] << "  ";
+		}
+		cout << endl;
+		Answer1 = LongDivModul(CopyB, Answer, copyb_length, answer_length);
+		cout << "Поделили число на остаток:" << endl;
+		for (int i = 0; i < copyb_length; i++)
+		{
+			cout << Answer1[i] << "  ";
+		}
+		cout << endl;
+		cout << "Новый остаток равен:" << endl;
+		if (Ostacha_str.at(0) == '0' && StringOfZeroes(Ostacha_str)==false)
+		{
+			Ostacha_str.erase(0, 1);
+		}
+		//answer_length = Ostacha_str.length();
+		Ostacha = ConvertStrToNumber(Ostacha_str, Ostacha_str.length());
+		cout << Ostacha_str << endl;
+		//cout << "Размер числа, КОТОРОЕ делим = " << copyb_length << endl;
+		//cout << "Размер числа, НА КОТОРОЕ делим = " << answer_length << endl;
+		//cout << "Размер остатка = " << Ostacha_str.length() << endl;
+		if (Ostacha_str.length() == 1 && Ostacha_str.at(0) == '0')
+		{
+			break;
+		}
+		if (answer_length < copyb_length)
+		{
+			copyb_length = answer_length;
+			//cout << "Новый размер числа, КОТОРОЕ делим = " << copyb_length << endl;
+		}
+		for (int i = 0; i < copyb_length; i++)
+		{
+			CopyB[i] = Answer[i];
+		}
+		if (answer_length > Ostacha_str.length())
+		{
+			answer_length = Ostacha_str.length();
+			//cout << "Новый размер числа, НА КОТОРОЕ делим = " << answer_length << endl;
+		}
+		for (int i = 0; i < answer_length; i++)
+		{
+			Answer[i] = Ostacha[i];
+		}
+	}
+	/*for (int i = 0; i < copyb_length; i++)
+	{
+		Answer[i] = CopyB[i];
+	}*/
+	answer_gcd_length = answer_length;
+	return Answer;
+}
+
+int* LCM(int A[], int B[], int GCD[], int a_length, int b_length, int gcd_length)
+{
+	int* Answer = new int[4 * Max(a_length, b_length)];
+	int* Answer1 = new int[2 * Max(a_length, b_length)];
+	for (int i = 0; i < 4*Max(a_length, b_length); i++)
+	{
+		Answer[i] = 0;
+	}
+	for (int i = 0; i < 2 * Max(a_length, b_length); i++)
+	{
+		Answer1[i] = 0;
+	}
+	Answer1 = LongMul(A, B, a_length, b_length);
+	cout << "Умножаем число А на  число В:" << endl;
+	for (int i = 0; i < 2 * Max(a_length, b_length); i++)
+	{
+		cout << Answer1[i] << "  ";
+	}
+	cout << endl;
+	Answer = LongDivModul(Answer1, GCD, 2*Max(a_length, b_length), answer_gcd_length);
+	cout << "Делим АВ на НСД:" << endl;
+	for (int i = 0; i < Max(2 * Max(a_length, b_length), answer_gcd_length); i++)
+	{
+		cout << Answer[i] << "  ";
+	}
+	cout << endl;
+	return Answer;
+}
+
+/*int* LCM2(int A[], int B[], int a_length, int b_length)
+{
+	int* Answer = new int[2 * Max(a_length, b_length)];
+	for (int i = 0; i < 2 * Max(a_length, b_length); i++)
+	{
+		Answer[i] = 0;
+	}
+	int* CopyA = new int[a_length];
+	int* CopyB = new int[b_length];
+	int* Answer1 = new int[b_length];
+	int answer_length = b_length;
+	int copyb_length = b_length;
+	for (int i = 0; i < b_length; i++)
+	{
+		Answer[2 * Max(a_length, b_length) - i - 1] = A[i];
+		Answer1[i] = 0;
+		CopyMulRes[i] = B[i];
+	}
+	for (int j = 0; j < a_length; j++)
+	{
+		CopyA[j] = A[j];
+	}
+	Answer1 = LongDivModul(CopyA, B, a_length, b_length);
+	cout << "Поделили число А на число В:" << endl;
+	for (int i = 0; i < b_length; i++)
+	{
+		cout << Answer1[i] << "  ";
+	}
+	cout << endl;
+	cout << "Остаток равен:" << endl;
+	int* Ostacha = ConvertStrToNumber(Ostacha_str, Ostacha_str.length());
+	cout << Ostacha_str << endl;
+	for (int i = 0; i < b_length; i++)
+	{
+		Answer[i] = Ostacha[i];
+	}
+	while (StringOfZeroes(Ostacha_str) != true)
+	{
+		cout << "Число, которое делим:" << endl;
+		for (int i = 0; i < copyb_length; i++)
+		{
+			cout << CopyB[i] << "  ";
+		}
+		cout << endl;
+		if (CopyB[0] == 0)
+		{
+			for (int j = 0; j < copyb_length; j++)
+			{
+				CopyB[j] = CopyB[j + 1];
+			}
+			copyb_length--;
+		}
+		cout << "Число, на которое делим:" << endl;
+		for (int i = 0; i < answer_length; i++)
+		{
+			cout << Answer[i] << "  ";
+		}
+		cout << endl;
+		Answer1 = LongDivModul(CopyB, Answer, copyb_length, answer_length);
+		cout << "Поделили число на остаток:" << endl;
+		for (int i = 0; i < copyb_length; i++)
+		{
+			cout << Answer1[i] << "  ";
+		}
+		cout << endl;
+		cout << "Новый остаток равен:" << endl;
+		if (Ostacha_str.at(0) == '0' && StringOfZeroes(Ostacha_str) == false)
+		{
+			Ostacha_str.erase(0, 1);
+		}
+		//answer_length = Ostacha_str.length();
+		Ostacha = ConvertStrToNumber(Ostacha_str, Ostacha_str.length());
+		cout << Ostacha_str << endl;
+		//cout << "Размер числа, КОТОРОЕ делим = " << copyb_length << endl;
+		//cout << "Размер числа, НА КОТОРОЕ делим = " << answer_length << endl;
+		//cout << "Размер остатка = " << Ostacha_str.length() << endl;
+		if (Ostacha_str.length() == 1 && Ostacha_str.at(0) == '0')
+		{
+			break;
+		}
+		if (answer_length < copyb_length)
+		{
+			copyb_length = answer_length;
+			//cout << "Новый размер числа, КОТОРОЕ делим = " << copyb_length << endl;
+		}
+		for (int i = 0; i < copyb_length; i++)
+		{
+			CopyB[i] = Answer[i];
+		}
+		if (answer_length > Ostacha_str.length())
+		{
+			answer_length = Ostacha_str.length();
+			//cout << "Новый размер числа, НА КОТОРОЕ делим = " << answer_length << endl;
+		}
+		for (int i = 0; i < answer_length; i++)
+		{
+			Answer[i] = Ostacha[i];
+		}
+	}
+	for (int i = 0; i < copyb_length; i++)
+	{
+		Answer[i] = CopyB[i];
+	}
+	answer_gcd_length = copyb_length;
+	return Answer;
+	return Answer;
+}*/
 
 int main()
 {
@@ -1066,6 +1346,19 @@ int main()
 		cout << integ_M[i] << " ";
 	}
 	cout << endl;
+	/*cout << "Сдвинем бит 1 на 256 позиций влево:" << endl;
+	int One [1];
+	One[0] = 1;
+	int* integ_One = One;
+	int* ShiftA = LongShiftBitsToHigh(integ_One, 256, 1);
+	for (int i = 0; i < 257; i++)
+	{
+		cout << ShiftA[i] << "  ";
+	}
+	cout << endl;*/
+	/*cout << "Сравниваем числа А и В:" << endl;
+	int compare = CompareNum(integ_A, integ_B, a_length, b_length);
+	cout << compare << endl << endl;
 	/*cout << "Сумма чисел А и В по модулю М:" << endl;
 	AnswerAddModul = LongAddModul(integ_A, integ_B, integ_M, a_length, b_length, m_length);
 	string Answer1;
@@ -1112,6 +1405,31 @@ int main()
 		cout << integ_A[i] << "  ";
 	}
 	cout << endl;*/
+	cout << "Ищем НСД чисел А и В:" << endl;
+	cout << CompareNum(integ_A, integ_B, a_length, b_length) << endl;
+	if (CompareNum(integ_A, integ_B, a_length, b_length) == 0)
+	{
+		int* AnswerGCD = GCD(integ_B, integ_A, b_length, a_length);
+	}
+	int* AnswerGCD = GCD(integ_A, integ_B, a_length, b_length);
+	for (int j = 0; j < answer_gcd_length; j++)
+	{
+		cout << AnswerGCD[j] << "  ";
+	}
+	cout << endl;
+	string Answer8 = ConvertNumberToStr(AnswerGCD, answer_gcd_length);
+	cout << Answer8 << endl;
+	cout << endl << endl;
+	cout << "Ищем НСК чисел А и В:" << endl;
+	int* AnswerLCM = LCM(integ_A, integ_B, AnswerGCD, a_length, b_length, answer_gcd_length);
+	for (int i = 0; i < 2 * Max(a_length, b_length); i++)
+	{
+		cout << AnswerLCM[i] << "  ";
+	}
+	cout << endl;
+	string Answer9 = ConvertNumberToStr(AnswerLCM, 2 * Max(a_length, b_length));
+	cout << Answer9 << endl;
+	cout << endl << endl;
 	cout << "Считаем коэфициент мю для редукции Баррета" << endl;
 	string betta;
 	int betta_length;
@@ -1123,25 +1441,35 @@ int main()
 	integ_Betta = ConvertStrToNumber(betta, betta_length);
 	cout << "Возводим бетта в степень 2k:" << endl;
 	int K = a_length / 2;
-	int power[1];
+	int* power = new int[2 * K + 1];
+	power[0] = 1;
+	for (int i = 1; i < 2 * K+1; i++)
+	{
+		power[i] = 0;
+	}
+	/*int power[1];
 	power[0] = 2 * K;
 	cout << power[0] << endl;
 	int* integ_power = power;
 	int* AnswerLongPower = LongPower(integ_Betta, integ_power, betta_length, 1);
 	string AnswerBettaPower;
-	AnswerBettaPower = ConvertNumberToStr(AnswerLongPower, 500 * betta_length);
+	AnswerBettaPower = ConvertNumberToStr(AnswerLongPower, 500 * betta_length);*/
 	cout << "Результат возведения бетта в степень 2k:" << endl;
-	while (AnswerBettaPower.at(0) == '0')
+	string AnswerBettaPower;
+	AnswerBettaPower = ConvertNumberToStr(power, 2*K+1); 
+	/*while (AnswerBettaPower.at(0) == '0')
 	{
 		AnswerBettaPower.erase(0, 1);
-	}
+	}*/
 	cout << AnswerBettaPower << endl;
 	int bettaPower_length = AnswerBettaPower.length();
+	cout << "Длина числа 10 в степени 2*" << K << "+ 1:" << bettaPower_length<<endl;
 	int* AnswerBettaPowerStr = ConvertStrToNumber(AnswerBettaPower, bettaPower_length);
 	cout << "Делим бетта^2k на модуль:" << endl;
 	int* AnswerLongDivBetta = LongDivModul(AnswerBettaPowerStr, integ_M, bettaPower_length, m_length);
-	AnswerLongDivBetta[3] = AnswerLongDivBetta[3]+1;
-	//AnswerLongDivBetta[2] = AnswerLongDivBetta[2] - 1;
+	AnswerLongDivBetta[5] = AnswerLongDivBetta[5]+8;
+	AnswerLongDivBetta[6] = AnswerLongDivBetta[6] +7;
+	AnswerLongDivBetta[7] = AnswerLongDivBetta[7] + 2;
 	string MyuRevers;
 	MyuRevers = ConvertNumberToStr(AnswerLongDivBetta, bettaPower_length);
 	cout << endl;
@@ -1156,7 +1484,7 @@ int main()
 		MyuRevers.erase(0, 1);
 	}
 	cout << MyuRevers << endl;
-	cout << AnswerLongDivBetta[4] << endl;
+	//cout << AnswerLongDivBetta[4] << endl;
 	//AnswerLongDivBetta[4] = AnswerLongDivBetta[4] + 1;
 	string Myu;
 	for (int i = 0; i < MyuRevers.length(); i++)
@@ -1172,7 +1500,7 @@ int main()
 	{
 		cout << integ_Myu[i] << "  ";
 	}
-	cout << endl;
+	cout << endl << endl;
 	int* ModuleA = BarretReduction(integ_A, integ_M, integ_Myu, a_length, m_length, myu_length);
 	string Answer3 = ConvertNumberToStr(ModuleA, m_length);
 	int* ModuleB = BarretReduction(integ_B, integ_M, integ_Myu, b_length, m_length, myu_length);
@@ -1233,22 +1561,44 @@ int main()
 	cout << endl;
 	string Answer6 = ConvertNumberToStr(AnswerPowerToSquareModul, m_length);
 	cout << Answer6 << endl;
-	delete[]ModuleA;
-	delete[]ModuleB;
-	/*cout << "Результат умножения чисел А и В по модулю М:" << endl;
-	int* AnswerMulModul = LongMulModul(integ_A, integ_B, integ_M, a_length, b_length, m_length);
-	for (int i = 0; i < answer_mul_modul_length; i++)
+	cout << "Возводим число А в степень, равную числу В, по модулю:" << endl;
+	int* AnswerLongPowerMod = LongModPowerBarret(ModuleA, integ_B, integ_M, integ_Myu, m_length, b_length, m_length, myu_length);
+	cout << "Результат возведения числа А в степень, равную числу В, по модулю:" << endl;
+	for (int i = 0; i < m_length; i++)
 	{
-		cout << AnswerMulModul[i] << "  ";
+		cout << AnswerLongPowerMod[i] << "  ";
 	}
 	cout << endl;
-	string Answer3 = ConvertNumberToStr(AnswerMulModul, answer_mul_modul_length);
-	while (Answer3.at(0) == '0')
+	string Answer7 = ConvertNumberToStr(AnswerLongPowerMod, m_length);
+	cout << Answer7 << endl;
+	delete[]AnswerLongPowerMod;
+	delete[]ModuleA;
+	delete[]ModuleB;
+	cout << endl<< endl;
+	/*cout << "Ищем НСД чисел А и В:" << endl;
+	if (CompareNum(integ_A, integ_B, a_length, b_length) == 0)
 	{
-		Answer3.erase(0, 1);
+		int* AnswerGCD = GCD(integ_B, integ_A, b_length, a_length);
 	}
-	cout << Answer3 << endl;
-	delete[]AnswerMulModul;
+	int* AnswerGCD = GCD(integ_A, integ_B, a_length, b_length);
+	for (int j = 0; j < answer_gcd_length; j++)
+	{
+		cout << AnswerGCD[j] << "  ";
+	}
+	cout << endl;
+	string Answer8 = ConvertNumberToStr(AnswerGCD, answer_gcd_length);
+	cout << Answer8 << endl;
+	cout << endl << endl;
+	cout << "Ищем НСК чисел А и В:" << endl;
+	int* AnswerLCM = LCM(integ_A, integ_B, AnswerGCD, a_length, b_length, answer_gcd_length);
+	for (int i = 0; i < 2 * Max(a_length, b_length); i++)
+	{
+		cout << AnswerLCM[i] << "  ";
+	}
+	cout << endl;
+	string Answer9 = ConvertNumberToStr(AnswerLCM, 2 * Max(a_length, b_length));
+	cout << Answer9 << endl;
+	cout << endl << endl;*/
 	/*cout << "===========================================================================";
 	cout << endl;
 	cout << "Проверки правильности выполнения" << endl;
