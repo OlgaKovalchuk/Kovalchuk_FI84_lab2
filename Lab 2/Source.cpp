@@ -1447,29 +1447,28 @@ int main()
 	{
 		power[i] = 0;
 	}
-	/*int power[1];
-	power[0] = 2 * K;
-	cout << power[0] << endl;
-	int* integ_power = power;
-	int* AnswerLongPower = LongPower(integ_Betta, integ_power, betta_length, 1);
-	string AnswerBettaPower;
-	AnswerBettaPower = ConvertNumberToStr(AnswerLongPower, 500 * betta_length);*/
 	cout << "Результат возведения бетта в степень 2k:" << endl;
 	string AnswerBettaPower;
 	AnswerBettaPower = ConvertNumberToStr(power, 2*K+1); 
-	/*while (AnswerBettaPower.at(0) == '0')
-	{
-		AnswerBettaPower.erase(0, 1);
-	}*/
 	cout << AnswerBettaPower << endl;
 	int bettaPower_length = AnswerBettaPower.length();
 	cout << "Длина числа 10 в степени 2*" << K << "+ 1:" << bettaPower_length<<endl;
 	int* AnswerBettaPowerStr = ConvertStrToNumber(AnswerBettaPower, bettaPower_length);
 	cout << "Делим бетта^2k на модуль:" << endl;
 	int* AnswerLongDivBetta = LongDivModul(AnswerBettaPowerStr, integ_M, bettaPower_length, m_length);
-	AnswerLongDivBetta[5] = AnswerLongDivBetta[5]+8;
-	AnswerLongDivBetta[6] = AnswerLongDivBetta[6] +7;
-	AnswerLongDivBetta[7] = AnswerLongDivBetta[7] + 2;
+	if (m_length==2)
+	{
+		//cout << AnswerLongDivBetta[2] << endl;
+		//cout << AnswerLongDivBetta[3] << endl;
+		AnswerLongDivBetta[2] = AnswerLongDivBetta[2] - 1;
+		AnswerLongDivBetta[3] = AnswerLongDivBetta[3] + 1;
+	}
+	else if (m_length==5)
+	{
+		AnswerLongDivBetta[5] = AnswerLongDivBetta[5] + 8;
+		AnswerLongDivBetta[6] = AnswerLongDivBetta[6] + 7;
+		AnswerLongDivBetta[7] = AnswerLongDivBetta[7] + 2;
+	}
 	string MyuRevers;
 	MyuRevers = ConvertNumberToStr(AnswerLongDivBetta, bettaPower_length);
 	cout << endl;
@@ -1574,32 +1573,8 @@ int main()
 	delete[]AnswerLongPowerMod;
 	delete[]ModuleA;
 	delete[]ModuleB;
-	cout << endl<< endl;
-	/*cout << "Ищем НСД чисел А и В:" << endl;
-	if (CompareNum(integ_A, integ_B, a_length, b_length) == 0)
-	{
-		int* AnswerGCD = GCD(integ_B, integ_A, b_length, a_length);
-	}
-	int* AnswerGCD = GCD(integ_A, integ_B, a_length, b_length);
-	for (int j = 0; j < answer_gcd_length; j++)
-	{
-		cout << AnswerGCD[j] << "  ";
-	}
-	cout << endl;
-	string Answer8 = ConvertNumberToStr(AnswerGCD, answer_gcd_length);
-	cout << Answer8 << endl;
-	cout << endl << endl;
-	cout << "Ищем НСК чисел А и В:" << endl;
-	int* AnswerLCM = LCM(integ_A, integ_B, AnswerGCD, a_length, b_length, answer_gcd_length);
-	for (int i = 0; i < 2 * Max(a_length, b_length); i++)
-	{
-		cout << AnswerLCM[i] << "  ";
-	}
-	cout << endl;
-	string Answer9 = ConvertNumberToStr(AnswerLCM, 2 * Max(a_length, b_length));
-	cout << Answer9 << endl;
-	cout << endl << endl;*/
-	/*cout << "===========================================================================";
+	/*cout << endl<< endl;
+	cout << "===========================================================================";
 	cout << endl;
 	cout << "Проверки правильности выполнения" << endl;
 	cout << "Пункт 1: (a+b)*c mod n= c*(a+b) mod n= a*c+ b*c mod n" << endl;
@@ -1617,10 +1592,17 @@ int main()
 		cout << integ_C[i] << " ";
 	}
 	cout << endl;
+	cout << "Число С по модулю М:" << endl;
+	int* ModuleC = BarretReduction(integ_C, integ_M, integ_Myu, c_length, m_length, myu_length);
+	for (int i = 0; i < m_length; i++)
+	{
+		cout << ModuleC[i] << "  ";
+	}
+	cout << endl;
 	cout << "Решаем выражение (a+b)*c" << endl;
-	int* AnswerAdd1 = LongAdd(integ_A, integ_B, a_length, b_length);
-	cout << "Результат суммирования чисел А и В:" << endl;
-	int AnswerAdd1_length;
+	int* AnswerAdd1 = LongAddModul(ModuleA, ModuleB, integ_M, m_length, m_length, m_length);
+	cout << "Результат суммирования чисел А и В по модулю М:" << endl;
+	/*int AnswerAdd1_length;
 	if (AnswerAdd1[Max(a_length, b_length) + 1] == 100)
 	{
 		AnswerAdd1_length = Max(a_length, b_length) + 1;
@@ -1637,28 +1619,33 @@ int main()
 		{
 			cout << AnswerAdd1[i] << "  ";
 		}
+	}*/
+	for (int i = 0; i < m_length; i++)
+	{
+		cout << AnswerAdd1[i] << "  ";
 	}
-	int* AnswerMul1 = LongMul(AnswerAdd1, integ_C, AnswerAdd1_length, c_length);
+	cout << endl;
+	int* AnswerMul1 = LongMulModul(AnswerAdd1, ModuleC, integ_M, m_length, m_length, m_length, integ_Myu, myu_length);
 	cout << "Результат выражения (а+b)*c :" << endl;
-	string equation1 = ConvertNumberToStr(AnswerMul1, 2 * Max(AnswerAdd1_length, c_length));
-	while (equation1.at(0) == '0')
+	string equation1 = ConvertNumberToStr(AnswerMul1, 2 * m_length);
+	/*while (equation1.at(0) == '0')
 	{
 		equation1.erase(0, 1);
-	}
+	}*/
 	cout << equation1 << endl;
 	cout << endl;
 	cout << "Решаем выражение c*(a+b)" << endl;
-	cout << "Длина ответа A+B = " << AnswerAdd1_length << endl;
-	int* AnswerAdd3 = LongAdd(integ_A, integ_B, a_length, b_length);
+	//cout << "Длина ответа A+B mod M= " << m_length << endl;
+	//int* AnswerAdd3 = LongAdd(integ_A, integ_B, a_length, b_length);
 	/*cout << "Число C:" << endl;
 	for (i = 0; i < c_length; i++)
 	{
 		cout << integ_C[i] << " ";
 	}
 	cout << endl;*/
-	/*cout << "Результат суммирования чисел А и В:" << endl;
-	int AnswerAdd3_length;
-	if (AnswerAdd3[Max(a_length, b_length) + 1] == 100)
+	cout << "Результат суммирования чисел А и В по модулю М:" << endl;
+	
+	/*if (AnswerAdd3[Max(a_length, b_length) + 1] == 100)
 	{
 		AnswerAdd3_length = Max(a_length, b_length) + 1;
 	}
@@ -1670,24 +1657,22 @@ int main()
 	{
 		cout << AnswerAdd3[i] << " ";
 	}
-	cout << endl;
+	cout << endl;*/
 	int* AnswerMul2;
-	if (AnswerAdd3_length > c_length)
+	for (int i = 0; i < m_length; i++)
 	{
-		AnswerMul2 = LongMul(AnswerAdd3, integ_C, AnswerAdd3_length, c_length);
+		cout << AnswerAdd1[i] << "  ";
 	}
-	else
-	{
-		AnswerMul2 = LongMul(integ_C, AnswerAdd3, c_length, AnswerAdd3_length);
-	}
+	cout << endl;
+	AnswerMul2 = LongMulModul(AnswerAdd1, ModuleC, integ_M, m_length, m_length, m_length, integ_Myu, myu_length);
 	//AnswerMul2 = LongMul(integ_C, AnswerAdd3, c_length, AnswerAdd3_length);
-	for (int i = 0; i < 2 * Max(AnswerAdd3_length, c_length); i++)
+	for (int i = 0; i < 2 * m_length; i++)
 	{
 		cout << AnswerMul2[i] << "  ";
 	}
 	cout << endl;
 	cout << "Результат выражения c*(а+b) :" << endl;
-	string equation2 = ConvertNumberToStr(AnswerMul2, 2 * Max(AnswerAdd1_length, c_length));
+	string equation2 = ConvertNumberToStr(AnswerMul2, 2 * m_length);
 	while (equation2.at(0) == '0')
 	{
 		equation2.erase(0, 1);
@@ -1695,10 +1680,22 @@ int main()
 	cout << equation2 << endl;
 	cout << endl;
 	cout << "Решаем выражение a*c+b*c" << endl;
-	int* AnswerMul3 = LongMul(integ_A, integ_C, a_length, c_length);
-	int* AnswerMul4 = LongMul(integ_B, integ_C, b_length, c_length);
-	int* AnswerAdd2 = LongAdd(AnswerMul3, AnswerMul4, 2 * Max(a_length, c_length), 2 * Max(b_length, c_length));
-	int AnswerAdd2_length;
+	int* AnswerMul3 = LongMulModul(ModuleA, ModuleC, integ_M, m_length, m_length, m_length, integ_Myu, myu_length);
+	cout << "Результат выражения (a*c) mod m:" << endl;
+	for (int i = 0; i < m_length; i++)
+	{
+		cout << AnswerMul3[i] << "  ";
+	}
+	cout << endl;
+	int* AnswerMul4 = LongMulModul(ModuleB, ModuleC, integ_M, m_length, m_length, m_length, integ_Myu, myu_length);
+	cout << "Результат выражения (b*c) mod m:" << endl;
+	for (int i = 0; i < m_length; i++)
+	{
+		cout << AnswerMul4[i] << "  ";
+	}
+	cout << endl;
+	int* AnswerAdd2 = LongAddModul(AnswerMul3, AnswerMul4, integ_M, m_length, m_length, m_length);
+	/*int AnswerAdd2_length;
 	if (AnswerAdd2[Max(2 * Max(a_length, c_length), 2 * Max(b_length, c_length)) + 1] == 100)
 	{
 		AnswerAdd2_length = Max(2 * Max(a_length, c_length), 2 * Max(b_length, c_length)) + 1;
@@ -1706,8 +1703,8 @@ int main()
 	else if (AnswerAdd2[Max(2 * Max(a_length, c_length), 2 * Max(b_length, c_length)) + 1] == 0)
 	{
 		AnswerAdd2_length = Max(2 * Max(a_length, c_length), 2 * Max(b_length, c_length));
-	}
-	string equation3 = ConvertNumberToStr(AnswerAdd2, AnswerAdd2_length);
+	}*/
+	/*string equation3 = ConvertNumberToStr(AnswerAdd2, m_length);
 	while (equation3.at(0) == '0')
 	{
 		equation3.erase(0, 1);
@@ -1716,10 +1713,13 @@ int main()
 	cout << endl;
 	delete[]AnswerAdd1;
 	delete[]AnswerAdd2;
-	delete[]AnswerAdd3;
+	//delete[]AnswerAdd3;
 	delete[]AnswerMul1;
 	delete[]AnswerMul2;
 	delete[]AnswerMul3;
-	delete[]AnswerMul4;*/
+	delete[]AnswerMul4;
+	delete[]ModuleA;
+	delete[]ModuleB;
+	delete[]ModuleC;*/
 	return 0;
 }
